@@ -4,21 +4,18 @@
     <parent>
         <groupId>fish.focus.uvms.maven</groupId>
         <artifactId>uvms-pom</artifactId>
-        <version>3.8</version>
+        <version>3.16</version>
     </parent>
 
-    <groupId>eu.europa.ec.fisheries.uvms.plugins.iridium</groupId>
+    <groupId>fish.focus.uvms.plugins.iridium</groupId>
     <artifactId>siriusone</artifactId>
     <version>3.0.14-SNAPSHOT</version>
     <packaging>war</packaging>
     <description>SiriusOne Plugin</description>
 
     <properties>
-        <swagger.version>1.3.1</swagger.version>
-
-        <uvms.common.version>4.1.11</uvms.common.version>
-        <audit.model.version>4.0.4</audit.model.version>
-        <exchange.model.version>5.3.22-UVMS</exchange.model.version>
+        <uvms.common.version>4.1.12</uvms.common.version>
+        <exchange.model.version>5.3.23</exchange.model.version>
 
         <project.scm.id>github</project.scm.id>
         
@@ -40,16 +37,16 @@
             <groupId>fish.focus.uvms.maven</groupId>
             <artifactId>uvms-pom-java11-deps</artifactId>
             <type>pom</type>
-            <version>3.8</version>
+            <version>3.16</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>eu.europa.ec.fisheries.uvms.exchange</groupId>
+            <groupId>fish.focus.uvms.exchange</groupId>
             <artifactId>exchange-model</artifactId>
             <version>${exchange.model.version}</version>
         </dependency>
         <dependency>
-            <groupId>eu.europa.ec.fisheries.uvms.commons</groupId>
+            <groupId>fish.focus.uvms.commons</groupId>
             <artifactId>uvms-commons-message</artifactId>
             <version>${uvms.common.version}</version>
         </dependency>
@@ -62,7 +59,7 @@
     </dependencies>
 
     <scm>
-        <connection>scm:git:https://github.com/UnionVMS/UVMS-SiriusOne-PLUGIN.git</connection>
+        <connection>scm:git:https://github.com/FocusFish/UVMS-SiriusOne-PLUGIN.git</connection>
         <tag>HEAD</tag>
     </scm>
 
