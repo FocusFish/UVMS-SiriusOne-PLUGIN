@@ -103,6 +103,7 @@ public class DownloadService {
     private Message[] getMails(String server, String port, String user, String password, String inboxSubfolder) throws MessagingException {
         Properties props = System.getProperties();
 
+        props.setProperty("mail.imap.starttls.enable", "true");
         props.setProperty("mail.imap.port", port);
         
         Session session = Session.getInstance(props, null);

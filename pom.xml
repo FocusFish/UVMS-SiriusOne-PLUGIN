@@ -4,18 +4,18 @@
     <parent>
         <groupId>fish.focus.uvms.maven</groupId>
         <artifactId>uvms-pom</artifactId>
-        <version>3.16</version>
+        <version>3.18</version>
     </parent>
 
     <groupId>fish.focus.uvms.plugins.iridium</groupId>
     <artifactId>siriusone</artifactId>
-    <version>3.0.14</version>
+    <version>3.0.15</version>
     <packaging>war</packaging>
     <description>SiriusOne Plugin</description>
 
     <properties>
         <uvms.common.version>4.1.12</uvms.common.version>
-        <exchange.model.version>5.3.23</exchange.model.version>
+        <exchange.model.version>5.3.27</exchange.model.version>
 
         <project.scm.id>github</project.scm.id>
         
@@ -37,7 +37,7 @@
             <groupId>fish.focus.uvms.maven</groupId>
             <artifactId>uvms-pom-java11-deps</artifactId>
             <type>pom</type>
-            <version>3.16</version>
+            <version>3.18</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -86,7 +86,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>properties-maven-plugin</artifactId>
-                <version>1.0.0</version>
+                <version>1.1.0</version>
                 <executions>
                     <execution>
                         <phase>generate-resources</phase>
