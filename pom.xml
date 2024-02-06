@@ -14,7 +14,7 @@
     <description>SiriusOne Plugin</description>
 
     <properties>
-        <uvms.common.version>4.1.12</uvms.common.version>
+        <uvms.common.version>4.1.15</uvms.common.version>
         <exchange.model.version>5.3.27</exchange.model.version>
 
         <project.scm.id>github</project.scm.id>
