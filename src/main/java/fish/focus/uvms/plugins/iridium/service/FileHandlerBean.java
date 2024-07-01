@@ -11,18 +11,15 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
  */
 package fish.focus.uvms.plugins.iridium.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.ejb.Singleton;
+import javax.ejb.Startup;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-import javax.ejb.Singleton;
-import javax.ejb.Startup;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-/**
- **/
 @Startup
 @Singleton
 public class FileHandlerBean {
@@ -39,5 +36,4 @@ public class FileHandlerBean {
         }
         return props;
     }
-
 }

@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
@@ -18,10 +19,10 @@
         <exchange.model.version>5.3.32</exchange.model.version>
 
         <project.scm.id>github</project.scm.id>
-        
-        <application.name>${project.artifactId}</application.name> 
-        <application.responseTopicName>PLUGIN_RESPONSE</application.responseTopicName> 
-        <application.groupid>${project.groupId}</application.groupid> 
+
+        <application.name>${project.artifactId}</application.name>
+        <application.responseTopicName>PLUGIN_RESPONSE</application.responseTopicName>
+        <application.groupid>${project.groupId}</application.groupid>
 
         <application.connection.factory>jms:/ConnectionFactory</application.connection.factory>
         <application.destination.jndi>jms:/jms/topic/EventBus</application.destination.jndi>

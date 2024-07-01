@@ -11,28 +11,27 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
  */
 package fish.focus.uvms.plugins.iridium.siriusone;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-/**
- **/
 public class SiriusOneMessage {
 
     private static final Logger LOG = LoggerFactory.getLogger(SiriusOneMessage.class);
 
+    private final SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd 'at' HH:mm:ss");
+
+    int time;
     private long deviceId;
     private long msgSequenseNo;
     private BoolType normalReport;
     private BoolType gpsValid;
-    int time;
     private LonHemispherType lonHemis;
     private LatHemispherType latHemis;
     private double longitude;
@@ -41,49 +40,6 @@ public class SiriusOneMessage {
     private double course;
     private byte[] msg;
     private String strMsg;
-    private final SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd 'at' HH:mm:ss");
-
-    public enum BoolType {
-
-        FALSE(0), TRUE(1);
-        private int value;
-
-        private BoolType(int value) {
-            this.value = value;
-        }
-
-        public int getValue() {
-            return value;
-        }
-    }
-
-    public enum LonHemispherType {
-
-        WEST(0), EAST(1);
-        private int value;
-
-        private LonHemispherType(int value) {
-            this.value = value;
-        }
-
-        public int getValue() {
-            return value;
-        }
-    }
-
-    public enum LatHemispherType {
-
-        SOUTH(1), NORTH(0);
-        private int value;
-
-        private LatHemispherType(int value) {
-            this.value = value;
-        }
-
-        public int getValue() {
-            return value;
-        }
-    }
 
     public SiriusOneMessage(byte[] msg, long deviceId, long msgSequenseNo) {
         this.msg = msg;
@@ -158,44 +114,24 @@ public class SiriusOneMessage {
         }
     }
 
-    private void setLongitude(String strMsg) {
-        int i = Integer.parseInt(strMsg.substring(26, 45), 2);
-        longitude = (double) i * 0.000344;
-    }
-
     private void setLatHemis(String strMsg) {
         latHemis = LatHemispherType.SOUTH;
-        if (strMsg.charAt(45)== '0') {
+        if (strMsg.charAt(45) == '0') {
             latHemis = LatHemispherType.NORTH;
         }
     }
 
-    private void setLatitude(String strMsg) {
-        int i = Integer.parseInt(strMsg.substring(46, 64), 2);
-        latitude = (double) i * 0.000344;
-    }
-
-    private void setSpeed(String strMsg) {
-        int i = Integer.parseInt(strMsg.substring(64, 72), 2);
-        speed = (double) i / 5;
-    }
-
-    private void setCourse(String strMsg) {
-        int i = Integer.parseInt(strMsg.substring(72), 2);
-        course = (double) i * 1.5;
-    }
-
     private void print() {
         LOG.debug(strMsg);
-        LOG.debug("normalreport: " + normalReport);
-        LOG.debug("gpsValid: " + gpsValid);
-        LOG.debug("time: " + time);
-        LOG.debug("lonHemis: " + lonHemis);
-        LOG.debug("longitude: " + longitude);
-        LOG.debug("latHemis: " + latHemis);
-        LOG.debug("latitude: " + latitude);
-        LOG.debug("speed: " + speed);
-        LOG.debug("course: " + course);
+        LOG.debug("normalreport: {}", normalReport);
+        LOG.debug("gpsValid: {}", gpsValid);
+        LOG.debug("time: {}", time);
+        LOG.debug("lonHemis: {}", lonHemis);
+        LOG.debug("longitude: {}", longitude);
+        LOG.debug("latHemis: {}", latHemis);
+        LOG.debug("latitude: {}", latitude);
+        LOG.debug("speed: {}", speed);
+        LOG.debug("course: {}", course);
     }
 
     public long getDeviceId() {
@@ -209,6 +145,11 @@ public class SiriusOneMessage {
         return longitude;
     }
 
+    private void setLongitude(String strMsg) {
+        int i = Integer.parseInt(strMsg.substring(26, 45), 2);
+        longitude = (double) i * 0.000344;
+    }
+
     public double getLatitude() {
         if (latHemis == LatHemispherType.SOUTH) {
             return latitude * -1.0;
@@ -217,12 +158,68 @@ public class SiriusOneMessage {
         return latitude;
     }
 
+    private void setLatitude(String strMsg) {
+        int i = Integer.parseInt(strMsg.substring(46, 64), 2);
+        latitude = (double) i * 0.000344;
+    }
+
     public double getSpeed() {
         return speed;
+    }
+
+    private void setSpeed(String strMsg) {
+        int i = Integer.parseInt(strMsg.substring(64, 72), 2);
+        speed = (double) i / 5;
     }
 
     public double getCourse() {
         return course;
     }
 
+    private void setCourse(String strMsg) {
+        int i = Integer.parseInt(strMsg.substring(72), 2);
+        course = (double) i * 1.5;
+    }
+
+    public enum BoolType {
+
+        FALSE(0), TRUE(1);
+        private int value;
+
+        private BoolType(int value) {
+            this.value = value;
+        }
+
+        public int getValue() {
+            return value;
+        }
+    }
+
+    public enum LonHemispherType {
+
+        WEST(0), EAST(1);
+        private int value;
+
+        private LonHemispherType(int value) {
+            this.value = value;
+        }
+
+        public int getValue() {
+            return value;
+        }
+    }
+
+    public enum LatHemispherType {
+
+        SOUTH(1), NORTH(0);
+        private int value;
+
+        private LatHemispherType(int value) {
+            this.value = value;
+        }
+
+        public int getValue() {
+            return value;
+        }
+    }
 }

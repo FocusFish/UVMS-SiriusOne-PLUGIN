@@ -11,21 +11,14 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
  */
 package fish.focus.uvms.plugins.iridium.producer;
 
-import javax.annotation.Resource;
-import javax.enterprise.context.ApplicationScoped;
-import javax.jms.Connection;
-import javax.jms.ConnectionFactory;
-import javax.jms.DeliveryMode;
-import javax.jms.JMSException;
-import javax.jms.MessageProducer;
-import javax.jms.Queue;
-import javax.jms.Session;
-import javax.jms.TextMessage;
-import javax.jms.Topic;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import fish.focus.uvms.commons.message.api.MessageConstants;
 import fish.focus.uvms.exchange.model.constant.ExchangeModelConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.annotation.Resource;
+import javax.enterprise.context.ApplicationScoped;
+import javax.jms.*;
 
 @ApplicationScoped
 public class PluginMessageProducer {
@@ -69,7 +62,7 @@ public class PluginMessageProducer {
 
             producer.setDeliveryMode(DeliveryMode.PERSISTENT);
             producer.send(message);
-                
+
             LOG.debug("SendMessage-queue:{}, message:{}", message);
             return message.getJMSMessageID();
 
@@ -92,7 +85,7 @@ public class PluginMessageProducer {
             producer.send(message);
             return message.getJMSMessageID();
         } catch (JMSException e) {
-            LOG.error(e.toString(),e);
+            LOG.error(e.toString(), e);
             throw e;
         }
     }

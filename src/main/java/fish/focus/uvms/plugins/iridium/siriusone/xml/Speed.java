@@ -21,16 +21,19 @@ public class Speed {
 
     private Double knots;
     private Double km;
- 
+
     public Double getKnots() {
         return knots;
     }
+
     public void setKnots(Double knots) {
         this.knots = knots;
     }
+
     public Double getKm() {
         return km;
     }
+
     public void setKm(Double km) {
         this.km = km;
     }

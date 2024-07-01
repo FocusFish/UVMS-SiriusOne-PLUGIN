@@ -11,17 +11,6 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
  */
 package fish.focus.uvms.plugins.iridium;
 
-import java.util.Map;
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import javax.ejb.Schedule;
-import javax.ejb.Singleton;
-import javax.ejb.Startup;
-import javax.ejb.Timer;
-import javax.inject.Inject;
-import javax.jms.JMSException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import fish.focus.schema.exchange.plugin.types.v1.PluginType;
 import fish.focus.schema.exchange.registry.v1.ExchangeRegistryMethod;
 import fish.focus.schema.exchange.service.v1.CapabilityListType;
@@ -32,6 +21,18 @@ import fish.focus.uvms.exchange.model.mapper.ExchangeModuleRequestMapper;
 import fish.focus.uvms.plugins.iridium.mapper.ServiceMapper;
 import fish.focus.uvms.plugins.iridium.producer.PluginMessageProducer;
 import fish.focus.uvms.plugins.iridium.service.FileHandlerBean;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import javax.ejb.Schedule;
+import javax.ejb.Singleton;
+import javax.ejb.Startup;
+import javax.ejb.Timer;
+import javax.inject.Inject;
+import javax.jms.JMSException;
+import java.util.Map;
 
 @Singleton
 @Startup
@@ -40,14 +41,6 @@ public class StartupBean extends PluginDataHolder {
     private static final Logger LOG = LoggerFactory.getLogger(StartupBean.class);
 
     private static final int MAX_NUMBER_OF_TRIES = 20;
-    private boolean isRegistered = false;
-    private boolean isEnabled = false;
-    private boolean waitingForResponse = false;
-    private int numberOfTriesExecuted = 0;
-
-    private String REGISTER_CLASS_NAME = "";
-    private String APPLICATION_NAME = "";
-    private String RESPONSE_TOPIC_NAME = "";
 
     @Inject
     PluginMessageProducer messageProducer;
@@ -55,13 +48,19 @@ public class StartupBean extends PluginDataHolder {
     @Inject
     FileHandlerBean fileHandler;
 
+    private boolean isRegistered = false;
+    private boolean isEnabled = false;
+    private boolean waitingForResponse = false;
+    private int numberOfTriesExecuted = 0;
+    private String REGISTER_CLASS_NAME = "";
+    private String APPLICATION_NAME = "";
+    private String RESPONSE_TOPIC_NAME = "";
     private CapabilityListType capabilities;
     private SettingListType settingList;
     private ServiceType serviceType;
 
     @PostConstruct
     public void startup() {
-
         //This must be loaded first!!! Not doing that will end in dire problems later on!
         super.setPluginApplicaitonProperties(fileHandler.getPropertiesFromFile(PluginDataHolder.PLUGIN_PROPERTIES));
         REGISTER_CLASS_NAME = getPLuginApplicationProperty("application.groupid");
@@ -111,7 +110,7 @@ public class StartupBean extends PluginDataHolder {
         if (isRegistered) {
             LOG.info(getRegisterClassName() + " is registered. Cancelling timer.");
             timer.cancel();
-        } else if(numberOfTriesExecuted >= MAX_NUMBER_OF_TRIES) {
+        } else if (numberOfTriesExecuted >= MAX_NUMBER_OF_TRIES) {
             LOG.info(getRegisterClassName() + " failed to register, maximum number of retries reached.");
         }
     }
@@ -166,8 +165,9 @@ public class StartupBean extends PluginDataHolder {
 
     public String getSetting(String key) {
         try {
-            LOG.debug("Trying to get setting {} ", REGISTER_CLASS_NAME + "." + APPLICATION_NAME + "." + key);
-            return super.getSettings().get(REGISTER_CLASS_NAME + "." + APPLICATION_NAME + "." + key);
+            String namespacedKey = REGISTER_CLASS_NAME + "." + APPLICATION_NAME + "." + key;
+            LOG.debug("Trying to get setting {} ", namespacedKey);
+            return super.getSettings().get(namespacedKey);
         } catch (Exception e) {
             LOG.error("Failed to getSetting for key: " + key, REGISTER_CLASS_NAME + "." + APPLICATION_NAME);
             return null;
@@ -197,5 +197,4 @@ public class StartupBean extends PluginDataHolder {
     public void setIsEnabled(boolean isEnabled) {
         this.isEnabled = isEnabled;
     }
-
 }
