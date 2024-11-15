@@ -11,27 +11,22 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
  */
 package fish.focus.uvms.plugins.iridium.mapper;
 
+import fish.focus.schema.exchange.plugin.types.v1.PluginType;
+import fish.focus.schema.exchange.service.v1.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import fish.focus.schema.exchange.plugin.types.v1.PluginType;
-import fish.focus.schema.exchange.service.v1.CapabilityListType;
-import fish.focus.schema.exchange.service.v1.CapabilityType;
-import fish.focus.schema.exchange.service.v1.CapabilityTypeType;
-import fish.focus.schema.exchange.service.v1.ServiceType;
-import fish.focus.schema.exchange.service.v1.SettingListType;
-import fish.focus.schema.exchange.service.v1.SettingType;
-
 public class ServiceMapper {
-    
-    private ServiceMapper() {}
 
     private static final Logger LOG = LoggerFactory.getLogger(ServiceMapper.class);
+
+    private ServiceMapper() {
+    }
 
     public static ServiceType getServiceType(String serviceClassName, String siriusoneDisplayName, String description, PluginType siriusoneType, String responseMessageName, String satelliteType) {
 

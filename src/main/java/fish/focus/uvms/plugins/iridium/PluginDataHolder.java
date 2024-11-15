@@ -11,10 +11,10 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
  */
 package fish.focus.uvms.plugins.iridium;
 
+import fish.focus.schema.exchange.movement.v1.SetReportMovementType;
+
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
-
-import fish.focus.schema.exchange.movement.v1.SetReportMovementType;
 
 public abstract class PluginDataHolder {
 
@@ -22,13 +22,13 @@ public abstract class PluginDataHolder {
     public static final String PROPERTIES = "settings.properties";
     public static final String CAPABILITIES = "capabilities.properties";
 
-    private Properties siriusoneApplicaitonProperties;
-    private Properties siriusoneProperties;
-    private Properties siriusoneCapabilities;
-
     private final ConcurrentHashMap<String, String> settings = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<String, String> capabilities = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<String, SetReportMovementType> cachedMovement = new ConcurrentHashMap<>();
+
+    private Properties siriusoneApplicaitonProperties;
+    private Properties siriusoneProperties;
+    private Properties siriusoneCapabilities;
 
     public ConcurrentHashMap<String, String> getSettings() {
         return settings;
@@ -65,5 +65,4 @@ public abstract class PluginDataHolder {
     public void setPluginCapabilities(Properties siriusoneCapabilities) {
         this.siriusoneCapabilities = siriusoneCapabilities;
     }
-
 }

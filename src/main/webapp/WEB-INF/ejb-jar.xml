@@ -11,10 +11,10 @@
   ~ copy of the GNU General Public License along with the IFDM Suite. If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<ejb-jar xmlns = "http://java.sun.com/xml/ns/javaee"
-         version = "3.0"
-         xmlns:xsi = "http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation = "http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/ejb-jar_3_0.xsd">
+<ejb-jar xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://java.sun.com/xml/ns/javaee"
+         version="3.0"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/ejb-jar_3_0.xsd">
 
     <enterprise-beans>
         <message-driven>
@@ -25,15 +25,18 @@
             <activation-config>
                 <activation-config-property>
                     <activation-config-property-name>subscriptionName</activation-config-property-name>
-                    <activation-config-property-value>${application.groupid}.${application.name}</activation-config-property-value>
+                    <activation-config-property-value>${application.groupid}.${application.name}
+                    </activation-config-property-value>
                 </activation-config-property>
                 <activation-config-property>
                     <activation-config-property-name>clientId</activation-config-property-name>
-                    <activation-config-property-value>${application.groupid}.${application.name}</activation-config-property-value>
+                    <activation-config-property-value>${application.groupid}.${application.name}
+                    </activation-config-property-value>
                 </activation-config-property>
                 <activation-config-property>
                     <activation-config-property-name>messageSelector</activation-config-property-name>
-                    <activation-config-property-value>ServiceName='${application.groupid}.${application.name}'</activation-config-property-value>
+                    <activation-config-property-value>ServiceName='${application.groupid}.${application.name}'
+                    </activation-config-property-value>
                 </activation-config-property>
                 <activation-config-property>
                     <activation-config-property-name>subscriptionDurability</activation-config-property-name>
@@ -57,15 +60,21 @@
             <activation-config>
                 <activation-config-property>
                     <activation-config-property-name>subscriptionName</activation-config-property-name>
-                    <activation-config-property-value>${application.groupid}.${application.name}${application.responseTopicName}</activation-config-property-value>
+                    <activation-config-property-value>
+                        ${application.groupid}.${application.name}${application.responseTopicName}
+                    </activation-config-property-value>
                 </activation-config-property>
                 <activation-config-property>
                     <activation-config-property-name>clientId</activation-config-property-name>
-                    <activation-config-property-value>${application.groupid}.${application.name}${application.responseTopicName}</activation-config-property-value>
+                    <activation-config-property-value>
+                        ${application.groupid}.${application.name}${application.responseTopicName}
+                    </activation-config-property-value>
                 </activation-config-property>
                 <activation-config-property>
                     <activation-config-property-name>messageSelector</activation-config-property-name>
-                    <activation-config-property-value>ServiceName='${application.groupid}.${application.name}${application.responseTopicName}'</activation-config-property-value>
+                    <activation-config-property-value>
+                        ServiceName='${application.groupid}.${application.name}${application.responseTopicName}'
+                    </activation-config-property-value>
                 </activation-config-property>
                 <activation-config-property>
                     <activation-config-property-name>subscriptionDurability</activation-config-property-name>

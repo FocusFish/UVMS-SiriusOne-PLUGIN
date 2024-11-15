@@ -11,16 +11,17 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
  */
 package fish.focus.uvms.plugins.iridium.service;
 
-import java.time.Instant;
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
-import javax.jms.JMSException;
 import fish.focus.schema.exchange.module.v1.ExchangeModuleMethod;
 import fish.focus.schema.exchange.movement.v1.SetReportMovementType;
 import fish.focus.schema.exchange.plugin.types.v1.PluginType;
 import fish.focus.uvms.exchange.model.mapper.ExchangeModuleRequestMapper;
 import fish.focus.uvms.plugins.iridium.StartupBean;
 import fish.focus.uvms.plugins.iridium.producer.PluginMessageProducer;
+
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
+import javax.jms.JMSException;
+import java.time.Instant;
 
 @RequestScoped
 public class ExchangeService {

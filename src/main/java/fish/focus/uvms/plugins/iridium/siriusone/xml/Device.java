@@ -11,7 +11,6 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
  */
 package fish.focus.uvms.plugins.iridium.siriusone.xml;
 
-import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -19,40 +18,49 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Device {
-    
+
     private String deviceType;
     private String name;
     private String firmware;
     private String serial;
     private Positions positions;
- 
+
     public String getDeviceType() {
         return deviceType;
     }
+
     public void setDeviceType(String deviceType) {
         this.deviceType = deviceType;
     }
+
     public String getName() {
         return name;
     }
+
     public void setName(String name) {
         this.name = name;
     }
+
     public String getFirmware() {
         return firmware;
     }
+
     public void setFirmware(String firmware) {
         this.firmware = firmware;
     }
+
     public String getSerial() {
         return serial;
     }
+
     public void setSerial(String serial) {
         this.serial = serial;
     }
+
     public Positions getPositions() {
         return positions;
     }
+
     public void setPositions(Positions positions) {
         this.positions = positions;
     }

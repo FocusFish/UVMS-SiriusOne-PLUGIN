@@ -11,11 +11,12 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
  */
 package fish.focus.uvms.plugins.iridium.siriusone;
 
+import fish.focus.uvms.plugins.iridium.StartupBean;
+
 import javax.ejb.Schedule;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.inject.Inject;
-import fish.focus.uvms.plugins.iridium.StartupBean;
 
 @Singleton
 @Startup

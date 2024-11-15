@@ -11,27 +11,22 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
  */
 package fish.focus.uvms.plugins.iridium.consumer;
 
-import javax.inject.Inject;
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.MessageListener;
-import javax.jms.TextMessage;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import fish.focus.schema.exchange.common.v1.AcknowledgeType;
 import fish.focus.schema.exchange.common.v1.AcknowledgeTypeType;
-import fish.focus.schema.exchange.plugin.v1.PingRequest;
-import fish.focus.schema.exchange.plugin.v1.PluginBaseRequest;
-import fish.focus.schema.exchange.plugin.v1.SetCommandRequest;
-import fish.focus.schema.exchange.plugin.v1.SetConfigRequest;
-import fish.focus.schema.exchange.plugin.v1.SetReportRequest;
-import fish.focus.schema.exchange.plugin.v1.StartRequest;
-import fish.focus.schema.exchange.plugin.v1.StopRequest;
+import fish.focus.schema.exchange.plugin.v1.*;
 import fish.focus.uvms.exchange.model.mapper.ExchangePluginResponseMapper;
 import fish.focus.uvms.exchange.model.mapper.JAXBMarshaller;
 import fish.focus.uvms.plugins.iridium.StartupBean;
 import fish.focus.uvms.plugins.iridium.producer.PluginMessageProducer;
 import fish.focus.uvms.plugins.iridium.service.PluginService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.inject.Inject;
+import javax.jms.JMSException;
+import javax.jms.Message;
+import javax.jms.MessageListener;
+import javax.jms.TextMessage;
 
 public class PluginNameEventBusListener implements MessageListener {
 

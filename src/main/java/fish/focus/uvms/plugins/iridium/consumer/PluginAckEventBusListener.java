@@ -11,18 +11,19 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
  */
 package fish.focus.uvms.plugins.iridium.consumer;
 
-import javax.inject.Inject;
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.MessageListener;
-import javax.jms.TextMessage;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import fish.focus.schema.exchange.registry.v1.ExchangeRegistryBaseRequest;
 import fish.focus.schema.exchange.registry.v1.RegisterServiceResponse;
 import fish.focus.schema.exchange.registry.v1.UnregisterServiceResponse;
 import fish.focus.uvms.exchange.model.mapper.JAXBMarshaller;
 import fish.focus.uvms.plugins.iridium.StartupBean;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.inject.Inject;
+import javax.jms.JMSException;
+import javax.jms.Message;
+import javax.jms.MessageListener;
+import javax.jms.TextMessage;
 
 public class PluginAckEventBusListener implements MessageListener {
 

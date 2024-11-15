@@ -11,30 +11,26 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
  */
 package fish.focus.uvms.plugins.iridium.service;
 
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import fish.focus.schema.exchange.common.v1.AcknowledgeTypeType;
-import fish.focus.schema.exchange.common.v1.CommandType;
-import fish.focus.schema.exchange.common.v1.CommandTypeType;
-import fish.focus.schema.exchange.common.v1.KeyValueType;
-import fish.focus.schema.exchange.common.v1.ReportType;
-import fish.focus.schema.exchange.common.v1.ReportTypeType;
+import fish.focus.schema.exchange.common.v1.*;
 import fish.focus.schema.exchange.movement.v1.MovementPoint;
 import fish.focus.schema.exchange.movement.v1.MovementType;
 import fish.focus.schema.exchange.plugin.types.v1.EmailType;
 import fish.focus.schema.exchange.plugin.types.v1.PollType;
 import fish.focus.schema.exchange.service.v1.SettingListType;
 import fish.focus.uvms.plugins.iridium.StartupBean;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
 
 @RequestScoped
 public class PluginService {
 
+    private static final Logger LOG = LoggerFactory.getLogger(PluginService.class);
+
     @Inject
     StartupBean startupBean;
-
-    private static final Logger LOG = LoggerFactory.getLogger(PluginService.class);
 
     /**
      * TODO implement
@@ -43,14 +39,14 @@ public class PluginService {
      * @return
      */
     public AcknowledgeTypeType setReport(ReportType report) {
-        LOG.info(startupBean.getRegisterClassName() + ".report(" + report.getType().name() + ")");
-        LOG.debug("timestamp: " + report.getTimestamp());
+        LOG.info("{}.report({})", startupBean.getRegisterClassName(), report.getType().name());
+        LOG.debug("timestamp: {}", report.getTimestamp());
         MovementType movement = report.getMovement();
         if (movement != null && ReportTypeType.MOVEMENT.equals(report.getType())) {
             MovementPoint pos = movement.getPosition();
             if (pos != null) {
-                LOG.info("lon: " + pos.getLongitude());
-                LOG.info("lat: " + pos.getLatitude());
+                LOG.info("lon: {}", pos.getLongitude());
+                LOG.info("lat: {}", pos.getLatitude());
             }
         }
         return AcknowledgeTypeType.OK;
@@ -63,15 +59,15 @@ public class PluginService {
      * @return
      */
     public AcknowledgeTypeType setCommand(CommandType command) {
-        LOG.info(startupBean.getRegisterClassName() + ".setCommand(" + command.getCommand().name() + ")");
-        LOG.debug("timestamp: " + command.getTimestamp());
+        LOG.info("{}.setCommand({})", startupBean.getRegisterClassName(), command.getCommand().name());
+        LOG.debug("timestamp: {}", command.getTimestamp());
         PollType poll = command.getPoll();
         EmailType email = command.getEmail();
         if (poll != null && CommandTypeType.POLL.equals(command.getCommand())) {
-            LOG.info("POLL: " + poll.getPollId());
+            LOG.info("POLL: {}", poll.getPollId());
         }
         if (email != null && CommandTypeType.EMAIL.equals(command.getCommand())) {
-            LOG.info("EMAIL: subject=" + email.getSubject());
+            LOG.info("EMAIL: subject={}", email.getSubject());
         }
         return AcknowledgeTypeType.OK;
     }
@@ -83,10 +79,10 @@ public class PluginService {
      * @return
      */
     public AcknowledgeTypeType setConfig(SettingListType settings) {
-        LOG.info(startupBean.getRegisterClassName() + ".setConfig()");
+        LOG.info("{}.setConfig()", startupBean.getRegisterClassName());
         try {
             for (KeyValueType values : settings.getSetting()) {
-                LOG.debug("Setting [ " + values.getKey() + " : " + values.getValue() + " ]");
+                LOG.debug("Setting [ {} : {}]", values.getKey(), values.getValue());
                 startupBean.getSettings().put(values.getKey(), values.getValue());
             }
             return AcknowledgeTypeType.OK;
@@ -94,7 +90,6 @@ public class PluginService {
             LOG.error("Failed to set config in {}", startupBean.getRegisterClassName());
             return AcknowledgeTypeType.NOK;
         }
-
     }
 
     /**
@@ -103,7 +98,7 @@ public class PluginService {
      * @return
      */
     public AcknowledgeTypeType start() {
-        LOG.info(startupBean.getRegisterClassName() + ".start()");
+        LOG.info("{}.start()", startupBean.getRegisterClassName());
         try {
             startupBean.setIsEnabled(Boolean.TRUE);
             return AcknowledgeTypeType.OK;
@@ -112,7 +107,6 @@ public class PluginService {
             LOG.error("Failed to start {}", startupBean.getRegisterClassName());
             return AcknowledgeTypeType.NOK;
         }
-
     }
 
     /**
@@ -121,7 +115,7 @@ public class PluginService {
      * @return
      */
     public AcknowledgeTypeType stop() {
-        LOG.info(startupBean.getRegisterClassName() + ".stop()");
+        LOG.info("{}.stop()", startupBean.getRegisterClassName());
         try {
             startupBean.setIsEnabled(Boolean.FALSE);
             return AcknowledgeTypeType.OK;
@@ -131,5 +125,4 @@ public class PluginService {
             return AcknowledgeTypeType.NOK;
         }
     }
-
 }
