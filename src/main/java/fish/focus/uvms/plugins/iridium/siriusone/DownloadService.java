@@ -59,36 +59,24 @@ public class DownloadService {
         }
     }
 
-    private void getMessages() throws IOException, MessagingException, JAXBException {
-        Message[] mails = getMails(startUp.getSetting("MAILHOST"), startUp.getSetting("MAILPORT"), startUp.getSetting("USERNAME"), startUp.getSetting("PSW"), startUp.getSetting("SUBFOLDER"));
-        LOG.info("New messages: {}", mails.length);
+    private void getMessages() throws IOException, MessagingException {
+        try (Store store = getConnectedStore(startUp.getSetting("MAILHOST"), startUp.getSetting("MAILPORT"),
+                startUp.getSetting("USERNAME"), startUp.getSetting("PSW"));
 
-        for (Message message : mails) {
-            Multipart multipart = (Multipart) message.getContent();
+             Folder inbox = openFolder(store, startUp.getSetting("SUBFOLDER"))) {
+            Message[] mails = getUnseenMessages(inbox);
 
-            for (int i = 0; i < multipart.getCount(); i++) {
-                BodyPart bodyPart = multipart.getBodyPart(i);
-                if (!Part.ATTACHMENT.equalsIgnoreCase(bodyPart.getDisposition()) && (bodyPart.getFileName() == null || bodyPart.getFileName().isEmpty())) {
-                    continue; // dealing with attachments only
-                }
-                try {
-                    InputStream is = bodyPart.getInputStream();
-                    String fileName = bodyPart.getFileName();
-                    if (fileName.endsWith(".xml")) {
-                        handleXmlReport(is);
-                    } else {
-                        handle10BytesReport(fileName, is);
-                    }
-                    message.setFlag(Flag.SEEN, true);
-                } catch (Exception e) {
-                    LOG.error("Could not handle report", e);
-                    message.setFlag(Flag.SEEN, false);
-                }
+            LOG.info("New messages: {}", mails.length);
+
+            for (Message message : mails) {
+                Multipart multipart = (Multipart) message.getContent();
+
+                parseMail(message, multipart);
             }
         }
     }
 
-    private Message[] getMails(String server, String port, String user, String password, String inboxSubfolder) throws MessagingException {
+    private Store getConnectedStore(String host, String port, String user, String password) throws MessagingException {
         Properties props = System.getProperties();
 
         props.setProperty("mail.imap.starttls.enable", "true");
@@ -97,19 +85,49 @@ public class DownloadService {
         Session session = Session.getInstance(props, null);
 
         Store store = session.getStore("imap");
-        store.connect(server, user, password);
+        store.connect(host, user, password);
+
+        return store;
+    }
+
+    private Folder openFolder(Store store, String inboxSubfolder) throws MessagingException {
         Folder inbox = store.getFolder("INBOX");
 
         if (inboxSubfolder != null) {
             inbox = inbox.getFolder(inboxSubfolder);
         }
+        inbox.open(Folder.READ_WRITE);
+        return inbox;
+    }
 
+    private static Message[] getUnseenMessages(Folder inbox) throws MessagingException {
         // search for all "unseen" messages
-        Flags seen = new Flags(Flags.Flag.SEEN);
+        Flags seen = new Flags(Flag.SEEN);
         FlagTerm unseenFlagTerm = new FlagTerm(seen, false);
 
-        inbox.open(Folder.READ_WRITE);
         return inbox.search(unseenFlagTerm);
+    }
+
+    private void parseMail(Message message, Multipart multipart) throws MessagingException {
+        for (int i = 0; i < multipart.getCount(); i++) {
+            BodyPart bodyPart = multipart.getBodyPart(i);
+            if (!Part.ATTACHMENT.equalsIgnoreCase(bodyPart.getDisposition()) && (bodyPart.getFileName() == null || bodyPart.getFileName().isEmpty())) {
+                continue; // dealing with attachments only
+            }
+
+            try (InputStream is = bodyPart.getInputStream()) {
+                String fileName = bodyPart.getFileName();
+                if (fileName.endsWith(".xml")) {
+                    handleXmlReport(is);
+                } else {
+                    handle10BytesReport(fileName, is);
+                }
+                message.setFlag(Flag.SEEN, true);
+            } catch (Exception e) {
+                LOG.error("Could not handle report", e);
+                message.setFlag(Flag.SEEN, false);
+            }
+        }
     }
 
     private void handle10BytesReport(String fileName, InputStream is) throws JMSException, IOException {
