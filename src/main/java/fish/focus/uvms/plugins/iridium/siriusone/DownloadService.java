@@ -11,51 +11,39 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
  */
 package fish.focus.uvms.plugins.iridium.siriusone;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.time.ZoneOffset;
-import java.util.Date;
-import java.util.Properties;
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
-import javax.jms.JMSException;
-import javax.mail.BodyPart;
-import javax.mail.Flags;
-import javax.mail.Flags.Flag;
-import javax.mail.Folder;
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.Multipart;
-import javax.mail.Part;
-import javax.mail.Session;
-import javax.mail.Store;
-import javax.mail.search.FlagTerm;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import fish.focus.schema.exchange.movement.mobileterminal.v1.IdList;
 import fish.focus.schema.exchange.movement.mobileterminal.v1.IdType;
 import fish.focus.schema.exchange.movement.mobileterminal.v1.MobileTerminalId;
-import fish.focus.schema.exchange.movement.v1.MovementBaseType;
-import fish.focus.schema.exchange.movement.v1.MovementComChannelType;
-import fish.focus.schema.exchange.movement.v1.MovementPoint;
-import fish.focus.schema.exchange.movement.v1.MovementSourceType;
-import fish.focus.schema.exchange.movement.v1.MovementTypeType;
-import fish.focus.schema.exchange.movement.v1.SetReportMovementType;
+import fish.focus.schema.exchange.movement.v1.*;
 import fish.focus.schema.exchange.plugin.types.v1.PluginType;
 import fish.focus.uvms.plugins.iridium.StartupBean;
 import fish.focus.uvms.plugins.iridium.service.ExchangeService;
 import fish.focus.uvms.plugins.iridium.siriusone.xml.Device;
 import fish.focus.uvms.plugins.iridium.siriusone.xml.Devices;
 import fish.focus.uvms.plugins.iridium.siriusone.xml.Position;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
+import javax.jms.JMSException;
+import javax.mail.*;
+import javax.mail.Flags.Flag;
+import javax.mail.search.FlagTerm;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
+import java.io.IOException;
+import java.io.InputStream;
+import java.time.ZoneOffset;
+import java.util.Date;
+import java.util.Properties;
 
 @RequestScoped
 public class DownloadService {
 
     private static final Logger LOG = LoggerFactory.getLogger(DownloadService.class);
-    
+
     @Inject
     StartupBean startUp;
 
@@ -71,59 +59,77 @@ public class DownloadService {
         }
     }
 
-    private void getMessages() throws IOException, MessagingException, JAXBException {
-        Message[] mails = getMails(startUp.getSetting("MAILHOST"), startUp.getSetting("MAILPORT"), startUp.getSetting("USERNAME"), startUp.getSetting("PSW"), startUp.getSetting("SUBFOLDER"));
-        LOG.info("New messages: {}", mails.length);
+    private void getMessages() throws IOException, MessagingException {
+        try (Store store = getConnectedStore(startUp.getSetting("MAILHOST"), startUp.getSetting("MAILPORT"),
+                startUp.getSetting("USERNAME"), startUp.getSetting("PSW"));
 
-        for (Message message : mails) {
-            Multipart multipart = (Multipart) message.getContent();
+             Folder inbox = openFolder(store, startUp.getSetting("SUBFOLDER"))) {
+            Message[] mails = getUnseenMessages(inbox);
 
-            for (int i = 0; i < multipart.getCount(); i++) {
-                BodyPart bodyPart = multipart.getBodyPart(i);
-                if (!Part.ATTACHMENT.equalsIgnoreCase(bodyPart.getDisposition()) && (bodyPart.getFileName() == null || bodyPart.getFileName().isEmpty())) {
-                    continue; // dealing with attachments only
-                }
-                try {
-                    InputStream is = bodyPart.getInputStream();
-                    String fileName = bodyPart.getFileName();
-                    if (fileName.endsWith(".xml")) {
-                        handleXmlReport(is);
-                    } else {
-                        handle10BytesReport(fileName, is);
-                    }
-                    message.setFlag(Flag.SEEN, true);
-                } catch (Exception e) {
-                    LOG.error("Could not handle report", e);
-                    message.setFlag(Flag.SEEN, false);
-                }
+            LOG.info("New messages: {}", mails.length);
+
+            for (Message message : mails) {
+                Multipart multipart = (Multipart) message.getContent();
+
+                parseMail(message, multipart);
             }
         }
     }
-    
-    private Message[] getMails(String server, String port, String user, String password, String inboxSubfolder) throws MessagingException {
+
+    private Store getConnectedStore(String host, String port, String user, String password) throws MessagingException {
         Properties props = System.getProperties();
 
         props.setProperty("mail.imap.starttls.enable", "true");
         props.setProperty("mail.imap.port", port);
-        
+
         Session session = Session.getInstance(props, null);
 
         Store store = session.getStore("imap");
-        store.connect(server, user, password);
+        store.connect(host, user, password);
+
+        return store;
+    }
+
+    private Folder openFolder(Store store, String inboxSubfolder) throws MessagingException {
         Folder inbox = store.getFolder("INBOX");
 
         if (inboxSubfolder != null) {
             inbox = inbox.getFolder(inboxSubfolder);
         }
+        inbox.open(Folder.READ_WRITE);
+        return inbox;
+    }
 
+    private static Message[] getUnseenMessages(Folder inbox) throws MessagingException {
         // search for all "unseen" messages
-        Flags seen = new Flags(Flags.Flag.SEEN);
+        Flags seen = new Flags(Flag.SEEN);
         FlagTerm unseenFlagTerm = new FlagTerm(seen, false);
 
-        inbox.open(Folder.READ_WRITE);
         return inbox.search(unseenFlagTerm);
     }
-    
+
+    private void parseMail(Message message, Multipart multipart) throws MessagingException {
+        for (int i = 0; i < multipart.getCount(); i++) {
+            BodyPart bodyPart = multipart.getBodyPart(i);
+            if (!Part.ATTACHMENT.equalsIgnoreCase(bodyPart.getDisposition()) && (bodyPart.getFileName() == null || bodyPart.getFileName().isEmpty())) {
+                continue; // dealing with attachments only
+            }
+
+            try (InputStream is = bodyPart.getInputStream()) {
+                String fileName = bodyPart.getFileName();
+                if (fileName.endsWith(".xml")) {
+                    handleXmlReport(is);
+                } else {
+                    handle10BytesReport(fileName, is);
+                }
+                message.setFlag(Flag.SEEN, true);
+            } catch (Exception e) {
+                LOG.error("Could not handle report", e);
+                message.setFlag(Flag.SEEN, false);
+            }
+        }
+    }
+
     private void handle10BytesReport(String fileName, InputStream is) throws JMSException, IOException {
         fileName = fileName.substring(0, fileName.indexOf('.'));
         String[] splittedFilename = fileName.split("_");
@@ -184,7 +190,7 @@ public class DownloadService {
 
         LOG.debug("LONGITUDE GET {}", msg.getLongitude());
         LOG.debug("LATITUDE GET {}", msg.getLatitude());
-        
+
         return reportType;
     }
 
@@ -195,10 +201,10 @@ public class DownloadService {
         service.sendMovementReportToExchange(reportType);
         LOG.debug("Sending movement to Exchange");
     }
-    
+
     private SetReportMovementType mapToSetReportMovementType(Device device) {
         MovementBaseType movement = new MovementBaseType();
-        
+
         movement.setComChannelType(MovementComChannelType.MOBILE_TERMINAL);
 
         MobileTerminalId mobTermId = new MobileTerminalId();
@@ -226,7 +232,7 @@ public class DownloadService {
         movement.setSource(MovementSourceType.IRIDIUM);
 
         movement.setLesReportTime(Date.from(position.getTimestamp().toInstant(ZoneOffset.UTC)));
-        
+
         SetReportMovementType reportType = new SetReportMovementType();
         reportType.setMovement(movement);
 
