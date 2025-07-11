@@ -10,6 +10,7 @@
 
     <groupId>fish.focus.uvms.plugins.iridium</groupId>
     <artifactId>siriusone</artifactId>
+    <name>siriusone</name>
     <version>3.0.18-SNAPSHOT</version>
     <packaging>war</packaging>
     <description>SiriusOne Plugin</description>
