@@ -17,7 +17,7 @@
 
     <properties>
         <uvms.common.version>4.1.15</uvms.common.version>
-        <exchange.model.version>5.3.32</exchange.model.version>
+        <exchange.model.version>5.4.0</exchange.model.version>
 
         <project.scm.id>github</project.scm.id>
 
